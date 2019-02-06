@@ -1,78 +1,109 @@
 package com.example.podcast.dontbackout;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.nfc.Tag;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.IOException;
-import java.util.Set;
-import java.util.UUID;
+public class MainActivity extends BlunoLibrary {
+    private Button buttonScan;
+    private Button buttonSerialSend;
+    private TextView serialReceivedText;
+    private EditText serialSendText;
 
-public class MainActivity extends AppCompatActivity {
+    /* renamed from: com.dfrobot.angelo.blunobasicdemo.MainActivity$1 */
+    class C01441 implements View.OnClickListener {
+        C01441() {
+        }
 
-    private static final String TAG = "dab";
-    TextView t1;
-    String address = null, name = null;
-    BluetoothAdapter myBluetooth = null;
-    BluetoothSocket btSocket = null; //where we can get our output/input from
-    Set<BluetoothDevice> pairedDevices;
-    static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+        public void onClick(View v) {
+            MainActivity.this.serialSend(MainActivity.this.serialSendText.getText().toString());
+        }
+    }
 
-    @Override
+    /* renamed from: com.dfrobot.angelo.blunobasicdemo.MainActivity$2 */
+    class C01452 implements View.OnClickListener {
+        C01452() {
+        }
+
+        public void onClick(View v) {
+            MainActivity.this.buttonScanOnClickProcess();
+        }
+    }
+
+    // runs first
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        try{
-            setup();
-        }
-        catch(Exception e){}
+        onCreateProcess();
+        serialBegin(115200);
+
+        // initializes the buttons and text in UI
+        this.serialReceivedText = (TextView) findViewById(R.id.serialReveicedText);
+        this.serialSendText = (EditText) findViewById(R.id.serialSendText);
+        this.buttonSerialSend = (Button) findViewById(R.id.buttonSerialSend);
+        this.buttonSerialSend.setOnClickListener(new C01441());
+        this.buttonScan = (Button) findViewById(R.id.buttonScan);
+        this.buttonScan.setOnClickListener(new C01452());
     }
 
-    private void setup() throws IOException {
-        t1 = (TextView)findViewById(R.id.test_text);
-        Log.i(TAG, (String) t1.getText());
-        bluetoothConnectDevice();
+    protected void onResume() {
+        super.onResume();
+        System.out.println("BlUNOActivity onResume");
+        onResumeProcess();
     }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        onActivityResultProcess(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
-    // method to connect bluetooth devices
-    private void bluetoothConnectDevice() throws IOException
-    {
-        try
-        {
-            myBluetooth = BluetoothAdapter.getDefaultAdapter();
-            address = myBluetooth.getAddress();
-            pairedDevices = myBluetooth.getBondedDevices();
-            if (pairedDevices.size() > 0)
-            {
-                for (BluetoothDevice bt : pairedDevices)
-                {
-                    address = bt.getAddress().toString();
-                    name = bt.getName().toString();
-                    Log.i(TAG, "gotem" + address + " " + name);
-                    Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-        catch (Exception we){}
+    protected void onPause() {
+        super.onPause();
+        onPauseProcess();
+    }
 
-        myBluetooth = BluetoothAdapter.getDefaultAdapter(); //get the mobile bluetooth device
-        BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(address); //connects to the device's address and checks if it's available
-        btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(myUUID); //create a RFCOMM (SPP) connection
-        btSocket.connect();
-        try {
-            Log.i(TAG, "\"BT Name: \" + name + \"\\nBT Address: \" + address");
-            t1.setText("BT Name: " + name + "\nBT Address: " + address);
-        }
-        catch (Exception e){
-            Log.i(TAG, "Text can't be set");
-        }
+    protected void onStop() {
+        super.onStop();
+        onStopProcess();
+    }
 
+    protected void onDestroy() {
+        super.onDestroy();
+        onDestroyProcess();
+    }
+
+    // figures out the status when scanning bluetooth
+    public void onConectionStateChange(connectionStateEnum theConnectionState) {
+        switch (theConnectionState) {
+            case isConnected:
+                this.buttonScan.setText("Connected");
+                return;
+            case isConnecting:
+                this.buttonScan.setText("Connecting");
+                return;
+            case isToScan:
+                this.buttonScan.setText("Scan");
+                return;
+            case isScanning:
+                this.buttonScan.setText("Scanning");
+                return;
+            case isDisconnecting:
+                this.buttonScan.setText("isDisconnecting");
+                return;
+            default:
+                return;
+        }
+    }
+
+    // gets what beetle sends to the device
+    public void onSerialReceived(String theString) {
+        this.serialReceivedText.append(theString);
+
+        // 130 represents Transport.KEYCODE_MEDIA_RECORD
+        ((ScrollView) this.serialReceivedText.getParent()).fullScroll(130);
     }
 }

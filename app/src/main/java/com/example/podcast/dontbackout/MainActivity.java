@@ -2,6 +2,7 @@ package com.example.podcast.dontbackout;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,18 +14,21 @@ public class MainActivity extends BlunoLibrary {
     private Button buttonSerialSend;
     private TextView serialReceivedText;
     private EditText serialSendText;
+    private Posture posture;
 
-    /* renamed from: com.dfrobot.angelo.blunobasicdemo.MainActivity$1 */
+    // sending data to beetle
     class C01441 implements View.OnClickListener {
         C01441() {
         }
 
         public void onClick(View v) {
-            MainActivity.this.serialSend(MainActivity.this.serialSendText.getText().toString());
+//            MainActivity.this.serialSend(MainActivity.this.serialSendText.getText().toString());
+//            Log.i("testing", MainActivity.this.serialSendText.getText().toString());
+//            MainActivity.this.serialSendText.setText("");
         }
     }
 
-    /* renamed from: com.dfrobot.angelo.blunobasicdemo.MainActivity$2 */
+    // scanner
     class C01452 implements View.OnClickListener {
         C01452() {
         }
@@ -42,12 +46,13 @@ public class MainActivity extends BlunoLibrary {
         serialBegin(115200);
 
         // initializes the buttons and text in UI
-        this.serialReceivedText = (TextView) findViewById(R.id.serialReveicedText);
-        this.serialSendText = (EditText) findViewById(R.id.serialSendText);
+//        this.serialReceivedText = (TextView) findViewById(R.id.serialReveicedText);
+//        this.serialSendText = (EditText) findViewById(R.id.serialSendText);
         this.buttonSerialSend = (Button) findViewById(R.id.buttonSerialSend);
         this.buttonSerialSend.setOnClickListener(new C01441());
         this.buttonScan = (Button) findViewById(R.id.buttonScan);
         this.buttonScan.setOnClickListener(new C01452());
+        posture = new Posture();
     }
 
     protected void onResume() {
@@ -101,9 +106,10 @@ public class MainActivity extends BlunoLibrary {
 
     // gets what beetle sends to the device
     public void onSerialReceived(String theString) {
-        this.serialReceivedText.append(theString);
+//        this.serialReceivedText.append(theString);
 
         // 130 represents Transport.KEYCODE_MEDIA_RECORD
-        ((ScrollView) this.serialReceivedText.getParent()).fullScroll(130);
+//        ((ScrollView) this.serialReceivedText.getParent()).fullScroll(130);
+        posture.add(theString);
     }
 }

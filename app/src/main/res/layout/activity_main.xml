@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -8,7 +8,6 @@
     android:focusableInTouchMode="true"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@android:color/holo_blue_dark"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <!--<ScrollView android:id="@id/scrollView" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@id/editText2" android:layout_alignParentBottom="true" android:layout_alignStart="@id/editText2" android:layout_alignEnd="@id/serialSendText">-->
         <!--<TextView android:textSize="10.0sp" android:id="@id/serialReveicedText" android:layout_width="wrap_content" android:layout_height="wrap_content" android:ems="10" android:layout_below="@id/editText2" android:layout_alignParentBottom="true" android:layout_alignStart="@id/editText2" android:layout_alignEnd="@id/serialSendText" />-->
@@ -22,6 +21,21 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="4dp"
         android:text="@string/send_data" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="@string/need_to_calibrate"
+        android:layout_above="@id/textBackStatus"
+        android:id="@+id/textCalibrate"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="Straight/Slanted"
+        android:id="@+id/textBackStatus"/>
     <!--<TextView android:textSize="25.0sp" android:id="@id/editText2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20.0dip" android:text="Received Data:" android:ems="10" android:layout_below="@id/serialSendText" android:layout_alignLeft="@id/serialSendText" />-->
 
     <!--<EditText-->
@@ -39,9 +53,55 @@
         <!--android:text="@string/data_sending_area"-->
         <!--android:textColor="#ff999999"-->
         <!--android:textSize="20.0dip" />-->
+
+
+    <Button
+        android:id="@+id/buttonRecalibrate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/textBackStatus"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginBottom="50dp"
+        android:text="Recalibrate." />
+
+    <Button
+        android:id="@+id/buttonCalibrate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/textBackStatus"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginBottom="50dp"
+        android:text="Calibrate Straight" />
+
+    <Button
+        android:id="@+id/buttonCalibrateSlouch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/textBackStatus"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginBottom="50dp"
+        android:text="Calibrate Slouch" />
+
+
     <Button
         android:id="@id/buttonScan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Scan" />
+
 </RelativeLayout>

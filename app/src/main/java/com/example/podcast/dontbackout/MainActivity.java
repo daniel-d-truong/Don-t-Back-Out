@@ -12,10 +12,23 @@ import android.widget.TextView;
 public class MainActivity extends BlunoLibrary {
     private Button buttonScan;
     private Button buttonSerialSend;
+    private Button buttonCalibrate;
+    private Button buttonCalibrateSlouch;
+    private Button buttonRecalibrate;
     private TextView serialReceivedText;
+    private TextView statusText;
+    public TextView calibrateText;
     private EditText serialSendText;
     private Posture posture;
 
+    // false --> not calibrating true --> calibrating
+    private boolean calibrateFlag;
+
+    // false if not calibrated yet, true if is calibrated
+    private boolean calibrated;
+
+    private boolean straightCalibrate;
+    private boolean slouchCalibrate;
     // sending data to beetle
     class C01441 implements View.OnClickListener {
         C01441() {
@@ -38,6 +51,61 @@ public class MainActivity extends BlunoLibrary {
         }
     }
 
+    class calibrateEvent implements View.OnClickListener{
+        TextView calibrateText = findViewById(R.id.textCalibrate);
+
+        boolean calibrating;
+        calibrateEvent(){
+            calibrating = false;
+        }
+        public void onClick(View v){
+             calibrating = !calibrating;
+             if (calibrating){
+                 straightCalibrate = true;
+                 calibrateText.setText("Calibrating straight..."); }
+             else{
+                 calibrateText.setText("Done calibrating straight.");
+                 straightCalibrate = false;
+                 MainActivity.this.buttonCalibrate.setVisibility(View.INVISIBLE);
+                 if (buttonCalibrateSlouch.getVisibility() == View.INVISIBLE){
+                     calibrated = true;
+                 }
+             }
+        }
+    }
+
+    class calibrateSlouchEvent implements View.OnClickListener{
+        boolean calibrating;
+        public calibrateSlouchEvent(){ calibrating = false; }
+        public void onClick(View v){
+            calibrating = !calibrating;
+            if (calibrating){
+                slouchCalibrate = true;
+                calibrateText.setText("Calibrating slouch...");
+            }
+            else{
+                calibrateText.setText("Done calibrating slouch.");
+                slouchCalibrate = false;
+                MainActivity.this.buttonCalibrateSlouch.setVisibility(View.INVISIBLE);
+                if (buttonCalibrate.getVisibility() == View.INVISIBLE){
+                    calibrated = true;
+                }
+            }
+        }
+    }
+
+    class reCalibrate implements View.OnClickListener{
+        public reCalibrate(){}
+
+        @Override
+        public void onClick(View v) {
+            calibrated = false;
+            buttonCalibrate.setVisibility(View.VISIBLE);
+            buttonCalibrateSlouch.setVisibility(View.VISIBLE);
+            posture.reset();
+        }
+    }
+
     // runs first
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +120,18 @@ public class MainActivity extends BlunoLibrary {
         this.buttonSerialSend.setOnClickListener(new C01441());
         this.buttonScan = (Button) findViewById(R.id.buttonScan);
         this.buttonScan.setOnClickListener(new C01452());
+        this.statusText = findViewById(R.id.textBackStatus);
+        this.buttonCalibrate = findViewById(R.id.buttonCalibrate);
+        this.buttonCalibrate.setOnClickListener(new calibrateEvent());
+        this.calibrateText = findViewById(R.id.textCalibrate);
+        this.buttonCalibrateSlouch = findViewById(R.id.buttonCalibrateSlouch);
+        this.buttonCalibrateSlouch.setOnClickListener(new calibrateSlouchEvent());
+        this.buttonRecalibrate = findViewById(R.id.buttonRecalibrate);
+        this.buttonRecalibrate.setOnClickListener(new reCalibrate());
+
         posture = new Posture();
+        this.calibrateFlag = false;
+        this.calibrated = false;
     }
 
     protected void onResume() {
@@ -107,9 +186,45 @@ public class MainActivity extends BlunoLibrary {
     // gets what beetle sends to the device
     public void onSerialReceived(String theString) {
 //        this.serialReceivedText.append(theString);
-
+        Double[] angles = turnStringToDoubleArray(theString);
+        if (angles == null){
+            return;
+        }
+        if (angles[0] == null || angles[1] == null || angles[2] == null || angles.length != 3){
+            return;
+        }
+        if (this.calibrated) {
+            String straightFlag = posture.findPostureStatus(angles);
+            Log.i("Straight/Slouch: ", straightFlag);
+            if (straightFlag == null){ return; }
+            statusText.setText(straightFlag);
+        }
+        else if (this.straightCalibrate){
+            posture.addStraightData(angles);
+            Log.i("Calibrating", "adding straight calibrated data");
+        }
+        else if (this.slouchCalibrate){
+            posture.addSlouchData(angles);
+            Log.i("Calibrating", "adding slouch calibrated data");
+        }
         // 130 represents Transport.KEYCODE_MEDIA_RECORD
 //        ((ScrollView) this.serialReceivedText.getParent()).fullScroll(130);
-        posture.add(theString);
+
+    }
+
+    public Double[] turnStringToDoubleArray(String x){
+        // ...
+        String[] split = x.split(" ");
+        Double[] angles = new Double[3];
+        for (int i = 0; i < split.length; i++){
+            try{
+                // Log.i("SPLIT STRING: ", split[i]);
+                angles[i] = Double.parseDouble(split[i]);
+            }
+            catch (NumberFormatException e){
+                return null;
+            }
+        }
+        return angles;
     }
 }

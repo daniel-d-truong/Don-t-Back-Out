@@ -37,4 +37,8 @@
     <string name="send_data">Send Data</string>
     <string name="text_to_send">Text to Send</string>
     <string name="data_sending_area">Data sending Area</string>
+    <string name="need_to_calibrate">Need to calibrate</string>
+    <string name="calibrate_straight"> Calibrating Straight Back... </string>
+    <string name="calibrate_slouch"> Calibrating Slouch Back. </string>
+    <string name="done_calibrating"> Done Calibrating. </string>
 </resources>

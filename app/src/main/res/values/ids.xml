@@ -51,4 +51,5 @@
     <item type="id" name="device_name"></item>
     <item type="id" name="device_address"></item>
     <item type="id" name="action_settings"></item>
+    <item type="id" name="buttonCalibrate"></item>
 </resources>

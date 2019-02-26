@@ -13,14 +13,6 @@
         <!--<TextView android:textSize="10.0sp" android:id="@id/serialReveicedText" android:layout_width="wrap_content" android:layout_height="wrap_content" android:ems="10" android:layout_below="@id/editText2" android:layout_alignParentBottom="true" android:layout_alignStart="@id/editText2" android:layout_alignEnd="@id/serialSendText" />-->
     <!--</ScrollView>-->
 
-    <Button
-        android:id="@id/buttonSerialSend"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="4dp"
-        android:text="@string/send_data" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

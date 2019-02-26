@@ -2,6 +2,7 @@ package com.example.podcast.dontbackout;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +21,8 @@ public class MainActivity extends BlunoLibrary {
     public TextView calibrateText;
     private EditText serialSendText;
     private Posture posture;
+    private final long CALIBRATE_TIME = 10500;
+    private final long INCREMENT_TIME = 1000;
 
     // false --> not calibrating true --> calibrating
     private boolean calibrateFlag;
@@ -48,51 +51,64 @@ public class MainActivity extends BlunoLibrary {
 
         public void onClick(View v) {
             MainActivity.this.buttonScanOnClickProcess();
+            posture.reset();
+            straightCalibrate = false;
+            slouchCalibrate = false;
+            calibrated = false;
         }
     }
 
+    // calibrating straight back
     class calibrateEvent implements View.OnClickListener{
-        TextView calibrateText = findViewById(R.id.textCalibrate);
-
-        boolean calibrating;
         calibrateEvent(){
-            calibrating = false;
         }
         public void onClick(View v){
-             calibrating = !calibrating;
-             if (calibrating){
-                 straightCalibrate = true;
-                 calibrateText.setText("Calibrating straight..."); }
-             else{
-                 calibrateText.setText("Done calibrating straight.");
-                 straightCalibrate = false;
-                 MainActivity.this.buttonCalibrate.setVisibility(View.INVISIBLE);
-                 if (buttonCalibrateSlouch.getVisibility() == View.INVISIBLE){
-                     calibrated = true;
-                 }
-             }
+            straightCalibrate = true;
+            calibrateText.setText("Calibrating straight...");
+            MainActivity.this.buttonCalibrate.setVisibility(View.INVISIBLE);
+            new CountDownTimer(CALIBRATE_TIME, INCREMENT_TIME) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    calibrateText.setText("Stay straight for another: " + (millisUntilFinished/1000) + "seconds");
+                }
+
+                @Override
+                public void onFinish() {
+                    calibrateText.setText("Done calibrating straight. " + posture.getStraightSize() + " entries added.");
+                    straightCalibrate = false;
+                    MainActivity.this.buttonCalibrateSlouch.setVisibility(View.VISIBLE);
+                }
+            }.start();
+
+
+
         }
     }
 
     class calibrateSlouchEvent implements View.OnClickListener{
-        boolean calibrating;
-        public calibrateSlouchEvent(){ calibrating = false; }
+
+        public calibrateSlouchEvent(){ }
         public void onClick(View v){
-            calibrating = !calibrating;
-            if (calibrating){
-                slouchCalibrate = true;
-                calibrateText.setText("Calibrating slouch...");
-            }
-            else{
-                calibrateText.setText("Done calibrating slouch.");
-                slouchCalibrate = false;
-                MainActivity.this.buttonCalibrateSlouch.setVisibility(View.INVISIBLE);
-                if (buttonCalibrate.getVisibility() == View.INVISIBLE){
+            slouchCalibrate = true;
+            calibrateText.setText("Calibrating slouch...");
+            MainActivity.this.buttonCalibrateSlouch.setVisibility(View.INVISIBLE);
+            new CountDownTimer(CALIBRATE_TIME, INCREMENT_TIME) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    calibrateText.setText("Stay slouched for another: " + (millisUntilFinished/1000) + "seconds");
+                }
+
+                @Override
+                public void onFinish() {
+                    calibrateText.setText("Done calibrating slouch. " + posture.getSlouchSize() + " entries added.");
+                    slouchCalibrate = false;
+                    MainActivity.this.buttonRecalibrate.setVisibility(View.VISIBLE);
                     calibrated = true;
                 }
-            }
+            }.start();
         }
     }
+
 
     class reCalibrate implements View.OnClickListener{
         public reCalibrate(){}
@@ -101,8 +117,9 @@ public class MainActivity extends BlunoLibrary {
         public void onClick(View v) {
             calibrated = false;
             buttonCalibrate.setVisibility(View.VISIBLE);
-            buttonCalibrateSlouch.setVisibility(View.VISIBLE);
             posture.reset();
+            calibrateText.setText("Click calibrate button when you are ready.");
+            buttonRecalibrate.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -116,8 +133,8 @@ public class MainActivity extends BlunoLibrary {
         // initializes the buttons and text in UI
 //        this.serialReceivedText = (TextView) findViewById(R.id.serialReveicedText);
 //        this.serialSendText = (EditText) findViewById(R.id.serialSendText);
-        this.buttonSerialSend = (Button) findViewById(R.id.buttonSerialSend);
-        this.buttonSerialSend.setOnClickListener(new C01441());
+//        this.buttonSerialSend = (Button) findViewById(R.id.buttonSerialSend);
+//        this.buttonSerialSend.setOnClickListener(new C01441());
         this.buttonScan = (Button) findViewById(R.id.buttonScan);
         this.buttonScan.setOnClickListener(new C01452());
         this.statusText = findViewById(R.id.textBackStatus);
@@ -128,6 +145,9 @@ public class MainActivity extends BlunoLibrary {
         this.buttonCalibrateSlouch.setOnClickListener(new calibrateSlouchEvent());
         this.buttonRecalibrate = findViewById(R.id.buttonRecalibrate);
         this.buttonRecalibrate.setOnClickListener(new reCalibrate());
+
+        this.buttonCalibrateSlouch.setVisibility(View.INVISIBLE);
+        this.buttonRecalibrate.setVisibility(View.INVISIBLE);
 
         posture = new Posture();
         this.calibrateFlag = false;
@@ -200,11 +220,15 @@ public class MainActivity extends BlunoLibrary {
             statusText.setText(straightFlag);
         }
         else if (this.straightCalibrate){
-            posture.addStraightData(angles);
+            for (int i = 0; i < 10; i++) {
+                posture.addStraightData(angles);
+            }
             Log.i("Calibrating", "adding straight calibrated data");
         }
         else if (this.slouchCalibrate){
-            posture.addSlouchData(angles);
+            for (int i = 0; i < 10; i++){
+                posture.addSlouchData(angles);
+            }
             Log.i("Calibrating", "adding slouch calibrated data");
         }
         // 130 represents Transport.KEYCODE_MEDIA_RECORD

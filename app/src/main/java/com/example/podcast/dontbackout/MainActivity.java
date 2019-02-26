@@ -1,8 +1,15 @@
 package com.example.podcast.dontbackout;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -24,14 +31,15 @@ public class MainActivity extends BlunoLibrary {
     private final long CALIBRATE_TIME = 10500;
     private final long INCREMENT_TIME = 1000;
 
-    // false --> not calibrating true --> calibrating
-    private boolean calibrateFlag;
-
     // false if not calibrated yet, true if is calibrated
     private boolean calibrated;
 
     private boolean straightCalibrate;
     private boolean slouchCalibrate;
+
+    // slouch counter to indicate when to notify the user
+    private int counter;
+
     // sending data to beetle
     class C01441 implements View.OnClickListener {
         C01441() {
@@ -123,18 +131,7 @@ public class MainActivity extends BlunoLibrary {
         }
     }
 
-    // runs first
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        onCreateProcess();
-        serialBegin(115200);
-
-        // initializes the buttons and text in UI
-//        this.serialReceivedText = (TextView) findViewById(R.id.serialReveicedText);
-//        this.serialSendText = (EditText) findViewById(R.id.serialSendText);
-//        this.buttonSerialSend = (Button) findViewById(R.id.buttonSerialSend);
-//        this.buttonSerialSend.setOnClickListener(new C01441());
+    private void initializeGUI(){
         this.buttonScan = (Button) findViewById(R.id.buttonScan);
         this.buttonScan.setOnClickListener(new C01452());
         this.statusText = findViewById(R.id.textBackStatus);
@@ -150,8 +147,24 @@ public class MainActivity extends BlunoLibrary {
         this.buttonRecalibrate.setVisibility(View.INVISIBLE);
 
         posture = new Posture();
-        this.calibrateFlag = false;
         this.calibrated = false;
+        this.counter = 0;
+    }
+
+    // runs first
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        onCreateProcess();
+        serialBegin(115200);
+        this.initializeGUI();
+        // initializes the buttons and text in UI
+//        this.serialReceivedText = (TextView) findViewById(R.id.serialReveicedText);
+//        this.serialSendText = (EditText) findViewById(R.id.serialSendText);
+//        this.buttonSerialSend = (Button) findViewById(R.id.buttonSerialSend);
+//        this.buttonSerialSend.setOnClickListener(new C01441());
+
+
     }
 
     protected void onResume() {
@@ -218,6 +231,15 @@ public class MainActivity extends BlunoLibrary {
             Log.i("Straight/Slouch: ", straightFlag);
             if (straightFlag == null){ return; }
             statusText.setText(straightFlag);
+            if (straightFlag.equals("SLOUCHED")){
+                counter++;
+                if (counter % 10 == 0){
+                    addNotification();
+                }
+            }
+            else{
+                counter = 0;
+            }
         }
         else if (this.straightCalibrate){
             for (int i = 0; i < 10; i++) {
@@ -250,5 +272,32 @@ public class MainActivity extends BlunoLibrary {
             }
         }
         return angles;
+    }
+
+    private void addNotification(){
+        // notificatoin ringtone
+        Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+        // builds notification
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setContentTitle("Bad Back!")
+                .setContentText("Make sure to straighten out your back.")
+                .setAutoCancel(true)
+                .setSound(soundUri)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setPriority(Notification.PRIORITY_MAX);
+
+        // Create the intent needed to show the notification
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        // Creating a pendingIntent for the notification to know how to act
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        builder.setContentIntent(contentIntent);
+
+        // Add as notification
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(0, builder.build());
     }
 }

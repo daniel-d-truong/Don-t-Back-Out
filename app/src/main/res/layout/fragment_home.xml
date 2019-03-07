@@ -1,14 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="200dp"
     tools:context=".HomeFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/textCalibrate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/textBackStatus"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="@string/need_to_calibrate" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/textBackStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="Straight/Slanted" />
+    <!--<TextView android:textSize="25.0sp" android:id="@id/editText2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20.0dip" android:text="Received Data:" android:ems="10" android:layout_below="@id/serialSendText" android:layout_alignLeft="@id/serialSendText" />-->
+
+    <!--<EditText-->
+    <!--android:id="@id/serialSendText"-->
+    <!--android:layout_width="310.0dip"-->
+    <!--android:layout_height="40.0dip"-->
+    <!--android:layout_below="@id/buttonScan"-->
+    <!--android:layout_centerHorizontal="true"-->
+    <!--android:layout_marginTop="22.0dip"-->
+    <!--android:background="#ff555555"-->
+    <!--android:bufferType="editable"-->
+    <!--android:ems="10"-->
+    <!--android:hint="@string/text_to_send"-->
+    <!--android:inputType="text"-->
+    <!--android:text="@string/data_sending_area"-->
+    <!--android:textColor="#ff999999"-->
+    <!--android:textSize="20.0dip" />-->
+
+    <Button
+        android:id="@+id/buttonRecalibrate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/textBackStatus"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginBottom="50dp"
+        android:text="Recalibrate." />
+
+    <Button
+        android:id="@+id/buttonCalibrate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/textBackStatus"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginBottom="50dp"
+        android:text="Calibrate Straight" />
+
+    <Button
+        android:id="@+id/buttonCalibrateSlouch"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignTop="@id/textBackStatus"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginBottom="50dp"
+        android:text="Calibrate Slouch" />
+
+
+    <Button
+        android:id="@+id/buttonScan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Scan" />
+</RelativeLayout>

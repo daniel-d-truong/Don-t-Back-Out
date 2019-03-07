@@ -1,99 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
+<android.support.design.widget.CoordinatorLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
     <!--<ScrollView android:id="@id/scrollView" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@id/editText2" android:layout_alignParentBottom="true" android:layout_alignStart="@id/editText2" android:layout_alignEnd="@id/serialSendText">-->
-        <!--<TextView android:textSize="10.0sp" android:id="@id/serialReveicedText" android:layout_width="wrap_content" android:layout_height="wrap_content" android:ems="10" android:layout_below="@id/editText2" android:layout_alignParentBottom="true" android:layout_alignStart="@id/editText2" android:layout_alignEnd="@id/serialSendText" />-->
+    <!--<TextView android:textSize="10.0sp" android:id="@id/serialReveicedText" android:layout_width="wrap_content" android:layout_height="wrap_content" android:ems="10" android:layout_below="@id/editText2" android:layout_alignParentBottom="true" android:layout_alignStart="@id/editText2" android:layout_alignEnd="@id/serialSendText" />-->
     <!--</ScrollView>-->
 
-    <TextView
-        android:layout_width="wrap_content"
+    <include
+        android:id="@+id/my_app_toolbar"
+        layout="@layout/app_bar" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="166dp" />
+
+    <com.aurelhubert.ahbottomnavigation.AHBottomNavigation
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="@string/need_to_calibrate"
-        android:layout_above="@id/textBackStatus"
-        android:id="@+id/textCalibrate"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="Straight/Slanted"
-        android:id="@+id/textBackStatus"/>
-    <!--<TextView android:textSize="25.0sp" android:id="@id/editText2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20.0dip" android:text="Received Data:" android:ems="10" android:layout_below="@id/serialSendText" android:layout_alignLeft="@id/serialSendText" />-->
+        android:layout_gravity="bottom"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-    <!--<EditText-->
-        <!--android:id="@id/serialSendText"-->
-        <!--android:layout_width="310.0dip"-->
-        <!--android:layout_height="40.0dip"-->
-        <!--android:layout_below="@id/buttonScan"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:layout_marginTop="22.0dip"-->
-        <!--android:background="#ff555555"-->
-        <!--android:bufferType="editable"-->
-        <!--android:ems="10"-->
-        <!--android:hint="@string/text_to_send"-->
-        <!--android:inputType="text"-->
-        <!--android:text="@string/data_sending_area"-->
-        <!--android:textColor="#ff999999"-->
-        <!--android:textSize="20.0dip" />-->
-
-
-    <Button
-        android:id="@+id/buttonRecalibrate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/textBackStatus"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="200dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginBottom="50dp"
-        android:text="Recalibrate." />
-
-    <Button
-        android:id="@+id/buttonCalibrate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/textBackStatus"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="200dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginBottom="50dp"
-        android:text="Calibrate Straight" />
-
-    <Button
-        android:id="@+id/buttonCalibrateSlouch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/textBackStatus"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="200dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginBottom="50dp"
-        android:text="Calibrate Slouch" />
-
-
-    <Button
-        android:id="@id/buttonScan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Scan" />
-
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

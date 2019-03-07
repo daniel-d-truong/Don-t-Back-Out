@@ -21,6 +21,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +34,7 @@ import com.example.podcast.dontbackout.BluetoothLeService.LocalBinder;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BlunoLibrary extends Activity {
+public abstract class BlunoLibrary extends AppCompatActivity {
     public static final String CommandUUID = "0000dfb2-0000-1000-8000-00805f9b34fb";
     public static final String ModelNumberStringUUID = "00002a24-0000-1000-8000-00805f9b34fb";
     private static final int REQUEST_ENABLE_BT = 1;
@@ -332,6 +333,7 @@ public abstract class BlunoLibrary extends Activity {
         this.mainContext.registerReceiver(this.mGattUpdateReceiver, makeGattUpdateIntentFilter());
     }
 
+    // called when application is exited
     public void onPauseProcess() {
         System.out.println("BLUNOActivity onPause");
         scanLeDevice(false);

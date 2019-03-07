@@ -9,15 +9,34 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.annotation.ColorRes;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.util.SparseArray;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.support.v7.widget.Toolbar;
 
-public class MainActivity extends BlunoLibrary {
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
+
+import java.util.ArrayList;
+import java.util.List;
+
+    public class MainActivity extends BlunoLibrary implements HomeFragment.OnFragmentInteractionListener {
     private Button buttonScan;
     private Button buttonSerialSend;
     private Button buttonCalibrate;
@@ -39,6 +58,11 @@ public class MainActivity extends BlunoLibrary {
 
     // slouch counter to indicate when to notify the user
     private int counter;
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 
     // sending data to beetle
     class C01441 implements View.OnClickListener {
@@ -131,8 +155,149 @@ public class MainActivity extends BlunoLibrary {
         }
     }
 
+    class tabTouchListener implements AHBottomNavigation.OnTabSelectedListener{
+        ViewPager viewPager;
+        public tabTouchListener(ViewPager viewPager){
+            this.viewPager = viewPager;
+        }
+        @Override
+        public boolean onTabSelected(int position, boolean wasSelected) {
+            if (!wasSelected)
+                viewPager.setCurrentItem(position);
+
+            return true;
+        }
+    }
+
+    /*
+    Extension of FragmentStatePagerAdapter which intelligently caches
+    all active fragments and manages the fragment lifecycles.
+    Usage involves extending from SmartFragmentStatePagerAdapter as you would any other PagerAdapter.
+    */
+    public abstract class SmartFragmentStatePagerAdapter extends FragmentStatePagerAdapter {
+        // Sparse array to keep track of registered fragments in memory
+        private SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
+
+        public SmartFragmentStatePagerAdapter(FragmentManager fragmentManager) {
+            super(fragmentManager);
+        }
+
+        // Register the fragment when the item is instantiated
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            Fragment fragment = (Fragment) super.instantiateItem(container, position);
+            registeredFragments.put(position, fragment);
+            return fragment;
+        }
+
+        // Unregister when the item is inactive
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            registeredFragments.remove(position);
+            super.destroyItem(container, position, object);
+        }
+
+        // Returns the fragment for the position (if instantiated)
+        public Fragment getRegisteredFragment(int position) {
+            return registeredFragments.get(position);
+        }
+    }
+
+    public class BottomBarAdapter extends SmartFragmentStatePagerAdapter {
+        private final List<Fragment> fragments = new ArrayList<>();
+
+        public BottomBarAdapter(FragmentManager fragmentManager) {
+            super(fragmentManager);
+        }
+        // Our custom method that populates this Adapter with Fragments
+        public void addFragments(Fragment fragment) {
+            fragments.add(fragment);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return fragments.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return fragments.size();
+        }
+    }
+
+    public class NoSwipePager extends ViewPager {
+        private boolean enabled;
+
+        public NoSwipePager(Context context, AttributeSet attrs) {
+            super(context, attrs);
+            this.enabled = true;
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+            if (this.enabled) {
+                return super.onTouchEvent(event);
+            }
+            return false;
+        }
+
+        @Override
+        public boolean onInterceptTouchEvent(MotionEvent event) {
+            if (this.enabled) {
+                return super.onInterceptTouchEvent(event);
+            }
+            return false;
+        }
+
+        public void setPagingEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
+
+    private int fetchColor(@ColorRes int color) {
+        return ContextCompat.getColor(this, color);
+    }
+
     private void initializeGUI(){
+        ViewPager pager = findViewById(R.id.frame);
+//        pager.setPagingEnabled(false);
+        PagerAdapter pagerAdapter = new BottomBarAdapter(getSupportFragmentManager());
+        Bundle bundle = new Bundle();
+        // idk about the color for this line
+        bundle.putInt("color", getTitleColor());
+
+        Fragment homeFragment = new HomeFragment();
+        homeFragment.setArguments(bundle);
+        ((BottomBarAdapter) pagerAdapter).addFragments(homeFragment);
+        pager.setAdapter(pagerAdapter);
+
+
+        // creating navigation bar
+        AHBottomNavigationItem homeItem =
+                new AHBottomNavigationItem("Home", R.drawable.ic_launcher_background);
+
+        AHBottomNavigationItem statsItem =
+                new AHBottomNavigationItem("Stats", R.drawable.item_background);
+
+        AHBottomNavigationItem aboutItem =
+                new AHBottomNavigationItem("About", R.drawable.notification_background);
+
+        AHBottomNavigation navigation = findViewById(R.id.bottom_navigation);
+
+        navigation.addItem(homeItem);
+        navigation.addItem(statsItem);
+        navigation.addItem(aboutItem);
+
+        navigation.setOnTabSelectedListener(new tabTouchListener(pager));
+        navigation.setCurrentItem(0);
+
+
+
         this.buttonScan = (Button) findViewById(R.id.buttonScan);
+        if (buttonScan == null){
+            Log.e("NULL", "BUTTONSCAN IS NULL");
+            return;
+        }
         this.buttonScan.setOnClickListener(new C01452());
         this.statusText = findViewById(R.id.textBackStatus);
         this.buttonCalibrate = findViewById(R.id.buttonCalibrate);
@@ -157,7 +322,9 @@ public class MainActivity extends BlunoLibrary {
         setContentView(R.layout.activity_main);
         onCreateProcess();
         serialBegin(115200);
-        this.initializeGUI();
+//        this.initializeGUI();
+        Toolbar toolbar = findViewById(R.id.my_app_toolbar);
+        setSupportActionBar(toolbar);
         // initializes the buttons and text in UI
 //        this.serialReceivedText = (TextView) findViewById(R.id.serialReveicedText);
 //        this.serialSendText = (EditText) findViewById(R.id.serialSendText);

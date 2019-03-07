@@ -21,6 +21,7 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +37,7 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import java.util.ArrayList;
 import java.util.List;
 
-    public class MainActivity extends BlunoLibrary implements HomeFragment.OnFragmentInteractionListener {
+public class MainActivity extends BlunoLibrary implements HomeFragment.HomeFragmentListener {
     private Button buttonScan;
     private Button buttonSerialSend;
     private Button buttonCalibrate;
@@ -49,10 +50,34 @@ import java.util.List;
     private Posture posture;
     private final long CALIBRATE_TIME = 10500;
     private final long INCREMENT_TIME = 1000;
+    private HomeFragment homeFragment;
+
+    public boolean isCalibrated() {
+        return calibrated;
+    }
+
+    public void setCalibrated(boolean calibrated) {
+        this.calibrated = calibrated;
+    }
+
+    public boolean isStraightCalibrate() {
+        return straightCalibrate;
+    }
+
+    public void setStraightCalibrate(boolean straightCalibrate) {
+        this.straightCalibrate = straightCalibrate;
+    }
+
+    public boolean isSlouchCalibrate() {
+        return slouchCalibrate;
+    }
+
+    public void setSlouchCalibrate(boolean slouchCalibrate) {
+        this.slouchCalibrate = slouchCalibrate;
+    }
 
     // false if not calibrated yet, true if is calibrated
     private boolean calibrated;
-
     private boolean straightCalibrate;
     private boolean slouchCalibrate;
 
@@ -60,9 +85,60 @@ import java.util.List;
     private int counter;
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void straightCalibrate(final TextView calibrateText) {
+        straightCalibrate = true;
+        calibrateText.setText("Calibrating straight...");
+
+        new CountDownTimer(CALIBRATE_TIME, INCREMENT_TIME) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                calibrateText.setText("Stay straight for another: " + (millisUntilFinished/1000) + "seconds");
+            }
+
+            @Override
+            public void onFinish() {
+                calibrateText.setText("Done calibrating straight. " + posture.getStraightSize() + " entries added.");
+                straightCalibrate = false;
+
+            }
+        }.start();
+    }
+
+    @Override
+    public void slouchCalibrate(final TextView calibrateText) {
+        slouchCalibrate = true;
+        calibrateText.setText("Calibrating slouch...");
+
+        new CountDownTimer(CALIBRATE_TIME, INCREMENT_TIME) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                calibrateText.setText("Stay slouched for another: " + (millisUntilFinished/1000) + "seconds");
+            }
+
+            @Override
+            public void onFinish() {
+                calibrateText.setText("Done calibrating slouch. " + posture.getSlouchSize() + " entries added.");
+                slouchCalibrate = false;
+
+                calibrated = true;
+            }
+        }.start();
+    }
+
+    @Override
+    public void reCalibrate(final TextView calibrateText) {
+        calibrated = false;
+
+        posture.reset();
+        calibrateText.setText("Click calibrate button when you are ready.");
 
     }
+
+//    @Override
+//    public void onFragmentInteraction(Uri uri) {
+//
+//    }
+
 
     // sending data to beetle
     class C01441 implements View.OnClickListener {
@@ -91,69 +167,85 @@ import java.util.List;
     }
 
     // calibrating straight back
-    class calibrateEvent implements View.OnClickListener{
-        calibrateEvent(){
-        }
-        public void onClick(View v){
-            straightCalibrate = true;
-            calibrateText.setText("Calibrating straight...");
-            MainActivity.this.buttonCalibrate.setVisibility(View.INVISIBLE);
-            new CountDownTimer(CALIBRATE_TIME, INCREMENT_TIME) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    calibrateText.setText("Stay straight for another: " + (millisUntilFinished/1000) + "seconds");
-                }
-
-                @Override
-                public void onFinish() {
-                    calibrateText.setText("Done calibrating straight. " + posture.getStraightSize() + " entries added.");
-                    straightCalibrate = false;
-                    MainActivity.this.buttonCalibrateSlouch.setVisibility(View.VISIBLE);
-                }
-            }.start();
-
-
-
-        }
-    }
-
-    class calibrateSlouchEvent implements View.OnClickListener{
-
-        public calibrateSlouchEvent(){ }
-        public void onClick(View v){
-            slouchCalibrate = true;
-            calibrateText.setText("Calibrating slouch...");
-            MainActivity.this.buttonCalibrateSlouch.setVisibility(View.INVISIBLE);
-            new CountDownTimer(CALIBRATE_TIME, INCREMENT_TIME) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    calibrateText.setText("Stay slouched for another: " + (millisUntilFinished/1000) + "seconds");
-                }
-
-                @Override
-                public void onFinish() {
-                    calibrateText.setText("Done calibrating slouch. " + posture.getSlouchSize() + " entries added.");
-                    slouchCalibrate = false;
-                    MainActivity.this.buttonRecalibrate.setVisibility(View.VISIBLE);
-                    calibrated = true;
-                }
-            }.start();
-        }
-    }
-
-
-    class reCalibrate implements View.OnClickListener{
-        public reCalibrate(){}
-
-        @Override
-        public void onClick(View v) {
-            calibrated = false;
-            buttonCalibrate.setVisibility(View.VISIBLE);
-            posture.reset();
-            calibrateText.setText("Click calibrate button when you are ready.");
-            buttonRecalibrate.setVisibility(View.INVISIBLE);
-        }
-    }
+//    class calibrateEvent implements View.OnClickListener{
+//        calibrateEvent(){
+//        }
+//        public void onClick(View v){
+//            straightCalibrate = true;
+//            calibrateText.setText("Calibrating straight...");
+//            MainActivity.this.buttonCalibrate.setVisibility(View.INVISIBLE);
+//            new CountDownTimer(CALIBRATE_TIME, INCREMENT_TIME) {
+//                @Override
+//                public void             slouchCalibrate = true;
+//            calibrateText.setText("Calibrating slouch...");
+//            MainActivity.this.buttonCalibrateSlouch.setVisibility(View.INVISIBLE);
+//            new CountDownTimer(CALIBRATE_TIME, INCREMENT_TIME) {
+//                @Override
+//                public void onTick(long millisUntilFinished) {
+//                    calibrateText.setText("Stay slouched for another: " + (millisUntilFinished/1000) + "seconds");
+//                }
+//
+//                @Override
+//                public void onFinish() {
+//                    calibrateText.setText("Done calibrating slouch. " + posture.getSlouchSize() + " entries added.");
+//                    slouchCalibrate = false;
+//                    MainActivity.this.buttonRecalibrate.setVisibility(View.VISIBLE);
+//                    calibrated = true;
+//                }
+//            }.start();onTick(long millisUntilFinished) {
+//                    calibrateText.setText("Stay straight for another: " + (millisUntilFinished/1000) + "seconds");
+//                }
+//
+//                @Override
+//                public void onFinish() {
+//                    calibrateText.setText("Done calibrating straight. " + posture.getStraightSize() + " entries added.");
+//                    straightCalibrate = false;
+//                    MainActivity.this.buttonCalibrateSlouch.setVisibility(View.VISIBLE);
+//                }
+//            }.start();
+//
+//
+//
+//        }
+//    }
+//
+//    class calibrateSlouchEvent implements View.OnClickListener{
+//
+//        public calibrateSlouchEvent(){ }
+//        public void onClick(View v){
+//            slouchCalibrate = true;
+//            calibrateText.setText("Calibrating slouch...");
+//            MainActivity.this.buttonCalibrateSlouch.setVisibility(View.INVISIBLE);
+//            new CountDownTimer(CALIBRATE_TIME, INCREMENT_TIME) {
+//                @Override
+//                public void onTick(long millisUntilFinished) {
+//                    calibrateText.setText("Stay slouched for another: " + (millisUntilFinished/1000) + "seconds");
+//                }
+//
+//                @Override
+//                public void onFinish() {
+//                    calibrateText.setText("Done calibrating slouch. " + posture.getSlouchSize() + " entries added.");
+//                    slouchCalibrate = false;
+//                    MainActivity.this.buttonRecalibrate.setVisibility(View.VISIBLE);
+//                    calibrated = true;
+//                }
+//            }.start();
+//        }
+//    }
+//
+//
+//    class reCalibrate implements View.OnClickListener{
+//        public reCalibrate(){}
+//
+//        @Override
+//        public void onClick(View v) {
+//            calibrated = false;
+//            buttonCalibrate.setVisibility(View.VISIBLE);
+//            posture.reset();
+//            calibrateText.setText("Click calibrate button when you are ready.");
+//            buttonRecalibrate.setVisibility(View.INVISIBLE);
+//        }
+//    }
 
     class tabTouchListener implements AHBottomNavigation.OnTabSelectedListener{
         ViewPager viewPager;
@@ -266,7 +358,7 @@ import java.util.List;
         // idk about the color for this line
         bundle.putInt("color", getTitleColor());
 
-        Fragment homeFragment = new HomeFragment();
+        homeFragment = new HomeFragment();
         homeFragment.setArguments(bundle);
         ((BottomBarAdapter) pagerAdapter).addFragments(homeFragment);
         pager.setAdapter(pagerAdapter);
@@ -291,25 +383,16 @@ import java.util.List;
         navigation.setOnTabSelectedListener(new tabTouchListener(pager));
         navigation.setCurrentItem(0);
 
+//        this.buttonScan.setOnClickListener(new MainActivity.C01452());
+//        this.statusText = (TextView) findViewById(R.id.textBackStatus);
+//        this.buttonCalibrate = (Button) findViewById(R.id.buttonCalibrate);
+//        this.buttonCalibrate.setOnClickListener(new MainActivity.calibrateEvent());
+//        this.calibrateText = (TextView) findViewById(R.id.textCalibrate);
+//        this.buttonCalibrateSlouch = (Button) findViewById(R.id.buttonCalibrateSlouch);
+//        this.buttonCalibrateSlouch.setOnClickListener(new MainActivity.calibrateSlouchEvent());
+//        this.buttonRecalibrate = (Button) findViewById(R.id.buttonRecalibrate);
+//        this.buttonRecalibrate.setOnClickListener(new MainActivity.reCalibrate());
 
-
-        this.buttonScan = (Button) findViewById(R.id.buttonScan);
-        if (buttonScan == null){
-            Log.e("NULL", "BUTTONSCAN IS NULL");
-            return;
-        }
-        this.buttonScan.setOnClickListener(new C01452());
-        this.statusText = findViewById(R.id.textBackStatus);
-        this.buttonCalibrate = findViewById(R.id.buttonCalibrate);
-        this.buttonCalibrate.setOnClickListener(new calibrateEvent());
-        this.calibrateText = findViewById(R.id.textCalibrate);
-        this.buttonCalibrateSlouch = findViewById(R.id.buttonCalibrateSlouch);
-        this.buttonCalibrateSlouch.setOnClickListener(new calibrateSlouchEvent());
-        this.buttonRecalibrate = findViewById(R.id.buttonRecalibrate);
-        this.buttonRecalibrate.setOnClickListener(new reCalibrate());
-
-        this.buttonCalibrateSlouch.setVisibility(View.INVISIBLE);
-        this.buttonRecalibrate.setVisibility(View.INVISIBLE);
 
         posture = new Posture();
         this.calibrated = false;
@@ -322,7 +405,7 @@ import java.util.List;
         setContentView(R.layout.activity_main);
         onCreateProcess();
         serialBegin(115200);
-//        this.initializeGUI();
+        this.initializeGUI();
         Toolbar toolbar = findViewById(R.id.my_app_toolbar);
         setSupportActionBar(toolbar);
         // initializes the buttons and text in UI
@@ -364,19 +447,19 @@ import java.util.List;
     public void onConectionStateChange(connectionStateEnum theConnectionState) {
         switch (theConnectionState) {
             case isConnected:
-                this.buttonScan.setText("Connected");
+                homeFragment.setButtonScanText("Connected");
                 return;
             case isConnecting:
-                this.buttonScan.setText("Connecting");
+                homeFragment.setButtonScanText("Connecting");
                 return;
             case isToScan:
-                this.buttonScan.setText("Scan");
+                homeFragment.setButtonScanText("Scan");
                 return;
             case isScanning:
-                this.buttonScan.setText("Scanning");
+                homeFragment.setButtonScanText("Scanning");
                 return;
             case isDisconnecting:
-                this.buttonScan.setText("isDisconnecting");
+                homeFragment.setButtonScanText("isDisconnecting");
                 return;
             default:
                 return;

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".StatsFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/relativeStatsFrame"
+        android:layout_marginTop="80dp"
+        android:layout_marginBottom="@dimen/bottom_navigation_height">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:text="Sunday"
+                android:textAlignment="textStart"
+                android:layout_height="match_parent"
+                android:layout_width="wrap_content">
+            </TextView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1 hour"
+                android:textAlignment="textEnd"/>
+
+        </android.support.v7.widget.CardView>
+
+    </RelativeLayout>
+
+
+
+</FrameLayout>

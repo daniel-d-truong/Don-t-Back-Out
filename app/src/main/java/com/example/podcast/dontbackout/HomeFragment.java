@@ -1,19 +1,29 @@
 package com.example.podcast.dontbackout;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
+
+import java.lang.reflect.Type;
+import java.time.format.TextStyle;
 
 
 /**
@@ -163,14 +173,26 @@ public class HomeFragment extends Fragment {
     public TextView calibrateText;
 
     private HomeFragmentListener homeListener;
+
+    private Typeface boldFont;
+    private ImageView leftButton;
+    private ImageView centerButton;
+    private ImageView rightButton;
+    private TextView topText;
+    private TextView startStopText;
+    private RelativeLayout progressBar;
+    private Typeface regularFont;
+
     public HomeFragment() {
         // Required empty public constructor
     }
 
     public interface HomeFragmentListener{
-        public void straightCalibrate(TextView t);
-        public void slouchCalibrate(TextView t);
-        public void reCalibrate(TextView t);
+        public void loadBluetooth(TextView t, View start, View progress);
+        public void straightCalibrate(TextView t, View start, View progress);
+        public void slouchCalibrate(TextView t, View start, View progress);
+        public void stopCalibrate(TextView t, View start, View progress);
+        public void changeVisibility(View v, int visibility);
     }
 
     /**
@@ -199,64 +221,80 @@ public class HomeFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
+
     }
 
-    private void initializeGUI(){
-        // button scan should go on the top app bar
-        this.buttonScan = (Button) findViewById(R.id.buttonScan);
-        if (buttonScan == null){
-            Log.e("NULL", "BUTTONSCAN IS NULL");
-            return;
-        }
-//        this.buttonScan.setOnClickListener(new MainActivity.C01452());
-        this.statusText = (TextView) findViewById(R.id.textBackStatus);
-        this.buttonCalibrate = (Button) findViewById(R.id.buttonCalibrate);
-//        this.buttonCalibrate.setOnClickListener(new MainActivity.calibrateEvent());
-        this.calibrateText = (TextView) findViewById(R.id.textCalibrate);
-        this.buttonCalibrateSlouch = (Button) findViewById(R.id.buttonCalibrateSlouch);
-//        this.buttonCalibrateSlouch.setOnClickListener(new MainActivity.calibrateSlouchEvent());
-        this.buttonRecalibrate = (Button) findViewById(R.id.buttonRecalibrate);
-//        this.buttonRecalibrate.setOnClickListener(new MainActivity.reCalibrate());
-        this.buttonCalibrate.setOnClickListener(new View.OnClickListener() {
+    private void initializeGUI(View view){
+        this.startStopText = (TextView) view.findViewById(R.id.startStopText);
+        this.boldFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/AvenirNextLTPro-Bold.otf");
+        this.regularFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/AvenirNextLTPro-Regular.otf");
+
+        this.startStopText.setTypeface(boldFont);
+        this.startStopText.setTextColor(Color.WHITE);
+
+        this.leftButton = (ImageView) view.findViewById(R.id.recalibrateButton);
+        this.centerButton = (ImageView) view.findViewById(R.id.status);
+        this.rightButton = (ImageView) view.findViewById(R.id.notificationButton);
+
+        this.topText = (TextView) view.findViewById(R.id.topPlaceText);
+        this.topText.setTypeface(regularFont);
+        this.topText.setTextColor(Color.WHITE);
+
+        
+        // trying to replace start with loading progress bar BUT onclick won't hide the Views
+        this.progressBar = (RelativeLayout) view.findViewById(R.id.loadingPanel);
+        this.progressBar.setVisibility(SurfaceView.GONE);
+        this.startStopText.setVisibility(View.VISIBLE);
+        this.startStopText.setOnClickListener(new View.OnClickListener() {
+            // 0 - needs to connect, 1 - needs to calibrate straight, 2 - needs to calibrate slouch, 3 - stop
+            private int step = 0;
+            private String[] words = new String[]{"start", "calibrate", "calibrate", "stop"};
+
             @Override
             public void onClick(View v) {
-                Log.i("BUTTON PRESS", "buttonCalibrate is being clicked.");
-                buttonCalibrate.setVisibility(View.INVISIBLE);
-                homeListener.straightCalibrate(calibrateText);
-                buttonCalibrateSlouch.setVisibility(View.VISIBLE);
-            }
-        });
-        this.buttonCalibrateSlouch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                buttonCalibrateSlouch.setVisibility(View.INVISIBLE);
-                homeListener.slouchCalibrate(calibrateText);
-                buttonRecalibrate.setVisibility(View.VISIBLE);
-            }
-        });
-        this.buttonRecalibrate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                buttonCalibrate.setVisibility(View.VISIBLE);
-                homeListener.reCalibrate(calibrateText);
-                buttonRecalibrate.setVisibility(View.INVISIBLE);
+                startStopText.setVisibility(View.GONE);
+                if (step == 0){
+                    homeListener.loadBluetooth(topText, startStopText, progressBar);
+
+                }
+                else if (step == 1) {
+                    homeListener.straightCalibrate(topText, startStopText, progressBar);
+                }
+                else if (step == 2){
+                    homeListener.slouchCalibrate(topText, startStopText, progressBar);
+                }
+                else{
+                    homeListener.stopCalibrate(topText, startStopText, progressBar);
+                }
+                step = (step + 1) % 4;
+                startStopText.setVisibility(View.VISIBLE);
+                startStopText.setText(words[step]);
             }
         });
 
-        this.buttonCalibrateSlouch.setVisibility(View.INVISIBLE);
-        this.buttonRecalibrate.setVisibility(View.INVISIBLE);
+
     }
+
+    private void makeVisible(View v){
+        v.setVisibility(View.VISIBLE);
+    }
+
+    private void makeGone(View v){
+        v.setVisibility(View.GONE);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+        return rootView;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
-        initializeGUI();
+        initializeGUI(view);
     }
 
     @Override
@@ -296,6 +334,10 @@ public class HomeFragment extends Fragment {
     }
 
     public void setButtonScanText(String x){
-        buttonScan.setText(x);
+//        buttonScan.setText(x);
+    }
+
+    public void changeImage(){
+
     }
 }

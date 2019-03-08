@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="match_parent"
     tools:context=".HomeFragment">
 
-    <TextView
-        android:id="@+id/textCalibrate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/textBackStatus"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="@string/need_to_calibrate" />
+    <!--<TextView-->
+        <!--android:id="@+id/textCalibrate"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_above="@id/textBackStatus"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:text="@string/need_to_calibrate" />-->
 
-    <TextView
-        android:id="@+id/textBackStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="Straight/Slanted" />
+    <!--<TextView-->
+        <!--android:id="@+id/textBackStatus"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:text="Straight/Slanted" />-->
     <!--<TextView android:textSize="25.0sp" android:id="@id/editText2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20.0dip" android:text="Received Data:" android:ems="10" android:layout_below="@id/serialSendText" android:layout_alignLeft="@id/serialSendText" />-->
 
     <!--<EditText-->
@@ -39,52 +40,152 @@
     <!--android:textColor="#ff999999"-->
     <!--android:textSize="20.0dip" />-->
 
-    <Button
-        android:id="@+id/buttonRecalibrate"
+    <!--<Button-->
+        <!--android:id="@+id/buttonRecalibrate"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignTop="@id/textBackStatus"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_marginStart="100dp"-->
+        <!--android:layout_marginTop="200dp"-->
+        <!--android:layout_marginEnd="100dp"-->
+        <!--android:layout_marginBottom="50dp"-->
+        <!--android:text="Recalibrate." />-->
+
+    <!--<Button-->
+        <!--android:id="@+id/buttonCalibrate"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignTop="@id/textBackStatus"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_marginStart="100dp"-->
+        <!--android:layout_marginTop="200dp"-->
+        <!--android:layout_marginEnd="100dp"-->
+        <!--android:layout_marginBottom="50dp"-->
+        <!--android:text="Calibrate Straight" />-->
+
+    <!--<Button-->
+        <!--android:id="@+id/buttonCalibrateSlouch"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_alignTop="@id/textBackStatus"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_marginStart="100dp"-->
+        <!--android:layout_marginTop="200dp"-->
+        <!--android:layout_marginEnd="100dp"-->
+        <!--android:layout_marginBottom="50dp"-->
+        <!--android:text="Calibrate Slouch" />-->
+
+
+    <!--<Button-->
+        <!--android:id="@+id/buttonScan"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Scan" />-->
+    <!--<ImageView-->
+        <!--android:id="@+id/imageView2"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:src="@drawable/home_screen" />-->
+
+    <ImageView
+        android:id="@+id/straightView"
+        android:layout_width="251dp"
+        android:layout_height="475dp"
+
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="81dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="79dp"
+        android:contentDescription="@string/straight_image"
+        android:foregroundGravity="center"
+        android:src="@drawable/straight_with_circle" />
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignBottom="@id/straightView"
+        android:layout_marginTop="550dp"
+        android:layout_marginBottom="0dp"
+        android:id="@+id/buttonsLayout">
+
+        <ImageView
+            android:id="@+id/recalibrateButton"
+            android:layout_width="50dp"
+            android:layout_height="100dp"
+            android:layout_gravity="start"
+            android:src="@drawable/left"
+            android:contentDescription="Recalibrate"/>
+        <TextView
+            android:layout_width="20dp"
+            android:layout_height="100dp" />
+
+        <ImageView
+            android:id="@+id/status"
+            android:layout_width="50dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:src="@drawable/center_x"
+            android:contentDescription="Not Connected"/>
+
+        <TextView
+            android:layout_width="20dp"
+            android:layout_height="100dp" />
+
+        <ImageView
+            android:id="@+id/notificationButton"
+            android:layout_width="50dp"
+            android:layout_height="100dp"
+            android:layout_gravity="end"
+            android:src="@drawable/right_1"
+            android:contentDescription="Notifications"/>
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/startStopText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/textBackStatus"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="200dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginBottom="50dp"
-        android:text="Recalibrate." />
+        android:layout_alignBottom="@id/buttonsLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="-46dp"
+        android:paddingTop="10dp"
+        android:text="@string/start"
+        android:textSize="30sp" />
 
-    <Button
-        android:id="@+id/buttonCalibrate"
+    <TextView
+        android:id="@+id/topPlaceText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/textBackStatus"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="200dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginBottom="50dp"
-        android:text="Calibrate Straight" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:gravity="center_horizontal"
+        android:text="Don't Back Out"
+        android:textSize="24sp" />
 
-    <Button
-        android:id="@+id/buttonCalibrateSlouch"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignTop="@id/textBackStatus"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="200dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginBottom="50dp"
-        android:text="Calibrate Slouch" />
-
-
-    <Button
-        android:id="@+id/buttonScan"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/loadingPanel"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Scan" />
+        android:gravity="center"
+        android:layout_alignBottom="@id/startStopText">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+    </RelativeLayout>
+
 </RelativeLayout>

@@ -1,12 +1,16 @@
 package com.example.podcast.dontbackout;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 
 /**
@@ -26,8 +30,10 @@ public class StatsFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private RelativeLayout statsLayout;
 
     private OnFragmentInteractionListener mListener;
+    private Typeface regularFont;
 
     public StatsFragment() {
         // Required empty public constructor
@@ -65,6 +71,27 @@ public class StatsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_stats, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState){
+        initializeGUI(view);
+    }
+
+    private void initializeGUI(View view) {
+        this.statsLayout = view.findViewById(R.id.statsLayout);
+        this.regularFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/AvenirNextLTPro-Regular.otf");
+        for (int i = 0; i < statsLayout.getChildCount(); i++){
+            CardView cv = (CardView) statsLayout.getChildAt(i);
+            for (int j = 0; j < statsLayout.getChildCount(); j++){
+                TextView v = (TextView) cv.getChildAt(j);
+                if (v == null){
+                    throw new NullPointerException("textview is null/"+ statsLayout.getChildCount());
+                }
+                v.setTypeface(this.regularFont);
+            }
+
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event

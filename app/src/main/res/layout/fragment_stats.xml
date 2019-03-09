@@ -1,42 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".StatsFragment">
+    tools:context=".StatsFragment"
+    android:id="@+id/statsLayout"
+    >
 
     <!-- TODO: Update blank fragment layout -->
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/relativeStatsFrame"
-        android:layout_marginTop="80dp"
-        android:layout_marginBottom="@dimen/bottom_navigation_height">
-
         <android.support.v7.widget.CardView
             android:layout_width="300dp"
             android:layout_height="50dp"
-            android:layout_centerHorizontal="true">
+            android:layout_centerHorizontal="true"
+            app:cardBackgroundColor="@android:color/secondary_text_dark"
+            app:cardElevation="0dp"
+            android:id="@+id/card1">
 
-            <TextView
-                android:text="Sunday"
-                android:textAlignment="textStart"
-                android:layout_height="match_parent"
-                android:layout_width="wrap_content">
-            </TextView>
+                <TextView
+                    android:text="Sunday"
+                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:id="@+id/left1">
+                </TextView>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="1 hour"
-                android:textAlignment="textEnd"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="1 hour"
+                    android:textAlignment="textEnd"
+                    android:gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:id="@+id/right1"/>
+
+
 
         </android.support.v7.widget.CardView>
 
-    </RelativeLayout>
 
 
-
-</FrameLayout>
+</RelativeLayout>

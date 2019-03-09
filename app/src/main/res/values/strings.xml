@@ -49,4 +49,6 @@
     <string name="about">about</string>
     <string name="start">start</string>
     <string name="straight_image">Straight Image</string>
+    <string name="failed_connection">Failed to calibrate. Connect again.</string>
+    <string name="calibration_successful">Calibration successful.</string>
 </resources>

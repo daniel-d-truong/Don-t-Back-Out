@@ -3,6 +3,7 @@ package com.example.podcast.dontbackout;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -35,125 +36,6 @@ import java.time.format.TextStyle;
  * create an instance of this fragment.
  */
 
-//// calibrating straight back
-//class calibrateEvent implements View.OnClickListener{
-//    calibrateEvent(){
-//    }
-//    public void onClick(View v){
-//        straightCalibrate = true;
-//        calibrateText.setText("Calibrating straight...");
-//        MainActivity.this.buttonCalibrate.setVisibility(View.INVISIBLE);
-//        new CountDownTimer(CALIBRATE_TIME, INCREMENT_TIME) {
-//            @Override
-//            public void onTick(long millisUntilFinished) {
-//                calibrateText.setText("Stay straight for another: " + (millisUntilFinished/1000) + "seconds");
-//            }
-//
-//            @Override
-//            public void onFinish() {
-//                calibrateText.setText("Done calibrating straight. " + posture.getStraightSize() + " entries added.");
-//                straightCalibrate = false;
-//                MainActivity.this.buttonCalibrateSlouch.setVisibility(View.VISIBLE);
-//            }
-//        }.start();
-//
-//
-//
-//    }
-//}
-//
-//class calibrateSlouchEvent implements View.OnClickListener{
-//
-//    public calibrateSlouchEvent(){ }
-//    public void onClick(View v){
-//        slouchCalibrate = true;
-//        calibrateText.setText("Calibrating slouch...");
-//        MainActivity.this.buttonCalibrateSlouch.setVisibility(View.INVISIBLE);
-//        new CountDownTimer(CALIBRATE_TIME, INCREMENT_TIME) {
-//            @Override
-//            public void onTick(long millisUntilFinished) {
-//                calibrateText.setText("Stay slouched for another: " + (millisUntilFinished/1000) + "seconds");
-//            }
-//
-//            @Override
-//            public void onFinish() {
-//                calibrateText.setText("Done calibrating slouch. " + posture.getSlouchSize() + " entries added.");
-//                slouchCalibrate = false;
-//                MainActivity.this.buttonRecalibrate.setVisibility(View.VISIBLE);
-//                calibrated = true;
-//            }
-//        }.start();
-//    }
-//}
-//
-//
-//class reCalibrate implements View.OnClickListener{
-//    public reCalibrate(){}
-//    // calibrating straight back
-//    class calibrateEvent implements View.OnClickListener{
-//        calibrateEvent(){
-//        }
-//        public void onClick(View v){
-//            straightCalibrate = true;
-//            calibrateText.setText("Calibrating straight...");
-//            MainActivity.this.buttonCalibrate.setVisibility(View.INVISIBLE);
-//            new CountDownTimer(CALIBRATE_TIME, INCREMENT_TIME) {
-//                @Override
-//                public void onTick(long millisUntilFinished) {
-//                    calibrateText.setText("Stay straight for another: " + (millisUntilFinished/1000) + "seconds");
-//                }
-//
-//                @Override
-//                public void onFinish() {
-//                    calibrateText.setText("Done calibrating straight. " + posture.getStraightSize() + " entries added.");
-//                    straightCalibrate = false;
-//                    MainActivity.this.buttonCalibrateSlouch.setVisibility(View.VISIBLE);
-//                }
-//            }.start();
-//
-//
-//
-//        }
-//    }
-//
-//    class calibrateSlouchEvent implements View.OnClickListener{
-//
-//        public calibrateSlouchEvent(){ }
-//        public void onClick(View v){
-//            slouchCalibrate = true;
-//            calibrateText.setText("Calibrating slouch...");
-//            MainActivity.this.buttonCalibrateSlouch.setVisibility(View.INVISIBLE);
-//            new CountDownTimer(CALIBRATE_TIME, INCREMENT_TIME) {
-//                @Override
-//                public void onTick(long millisUntilFinished) {
-//                    calibrateText.setText("Stay slouched for another: " + (millisUntilFinished/1000) + "seconds");
-//                }
-//
-//                @Override
-//                public void onFinish() {
-//                    calibrateText.setText("Done calibrating slouch. " + posture.getSlouchSize() + " entries added.");
-//                    slouchCalibrate = false;
-//                    MainActivity.this.buttonRecalibrate.setVisibility(View.VISIBLE);
-//                    calibrated = true;
-//                }
-//            }.start();
-//        }
-//    }
-//
-//
-//    class reCalibrate implements View.OnClickListener{
-//        public reCalibrate(){}
-//
-//        @Override
-//        public void onClick(View v) {
-//            calibrated = false;
-//            buttonCalibrate.setVisibility(View.VISIBLE);
-//            posture.reset();
-//            calibrateText.setText("Click calibrate button when you are ready.");
-//            buttonRecalibrate.setVisibility(View.INVISIBLE);
-//        }
-//    }
-//}
 
 public class HomeFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -165,12 +47,6 @@ public class HomeFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private Button buttonScan;
-    private Button buttonCalibrate;
-    private Button buttonCalibrateSlouch;
-    private Button buttonRecalibrate;
-    private TextView statusText;
-    public TextView calibrateText;
 
     private HomeFragmentListener homeListener;
 
@@ -179,20 +55,24 @@ public class HomeFragment extends Fragment {
     private ImageView centerButton;
     private ImageView rightButton;
     private TextView topText;
-    private TextView startStopText;
+    private Button startStopText;
     private RelativeLayout progressBar;
     private Typeface regularFont;
+    private ImageView visualImage;
+    private Drawable[] backImages;
+    private int imageIndex = 0;
+    private boolean notification = true;
 
     public HomeFragment() {
         // Required empty public constructor
     }
 
     public interface HomeFragmentListener{
-        public void loadBluetooth(TextView t, View start, View progress);
-        public void straightCalibrate(TextView t, View start, View progress);
-        public void slouchCalibrate(TextView t, View start, View progress);
+        public boolean loadBluetooth(TextView t, View start, View progress);
+        public boolean straightCalibrate(TextView t, View start, View progress);
+        public boolean slouchCalibrate(TextView t, View start, View progress);
         public void stopCalibrate(TextView t, View start, View progress);
-        public void changeVisibility(View v, int visibility);
+        public void changeNotificationStatus();
     }
 
     /**
@@ -225,7 +105,12 @@ public class HomeFragment extends Fragment {
     }
 
     private void initializeGUI(View view){
-        this.startStopText = (TextView) view.findViewById(R.id.startStopText);
+        this.backImages = new Drawable[]{getActivity().getDrawable(R.drawable.straight_with_circle),
+                getActivity().getDrawable(R.drawable.slouched_with_circle)};
+
+        this.visualImage = (ImageView) view.findViewById(R.id.straightView);
+
+        this.startStopText = view.findViewById(R.id.startStopText);
         this.boldFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/AvenirNextLTPro-Bold.otf");
         this.regularFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/AvenirNextLTPro-Regular.otf");
 
@@ -239,7 +124,6 @@ public class HomeFragment extends Fragment {
         this.topText = (TextView) view.findViewById(R.id.topPlaceText);
         this.topText.setTypeface(regularFont);
         this.topText.setTextColor(Color.WHITE);
-
         
         // trying to replace start with loading progress bar BUT onclick won't hide the Views
         this.progressBar = (RelativeLayout) view.findViewById(R.id.loadingPanel);
@@ -248,20 +132,26 @@ public class HomeFragment extends Fragment {
         this.startStopText.setOnClickListener(new View.OnClickListener() {
             // 0 - needs to connect, 1 - needs to calibrate straight, 2 - needs to calibrate slouch, 3 - stop
             private int step = 0;
-            private String[] words = new String[]{"start", "calibrate", "calibrate", "stop"};
+            private String[] words = new String[]{"connect", "calibrate", "calibrate", "stop"};
 
             @Override
             public void onClick(View v) {
                 startStopText.setVisibility(View.GONE);
                 if (step == 0){
                     homeListener.loadBluetooth(topText, startStopText, progressBar);
-
                 }
                 else if (step == 1) {
                     homeListener.straightCalibrate(topText, startStopText, progressBar);
+//                    if (!status){
+//                        step = -1;
+//                    }
                 }
                 else if (step == 2){
+
                     homeListener.slouchCalibrate(topText, startStopText, progressBar);
+//                    if (!status){
+//                        step = -1;
+//                    }
                 }
                 else{
                     homeListener.stopCalibrate(topText, startStopText, progressBar);
@@ -272,16 +162,23 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        this.rightButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (notification){
+                    rightButton.setImageDrawable(getActivity().getDrawable(R.drawable.right_2));
+                }
+                else{
+                    rightButton.setImageDrawable(getActivity().getDrawable(R.drawable.right_1));
+                }
+                notification = !notification;
+                homeListener.changeNotificationStatus();
+            }
+        });
+
 
     }
 
-    private void makeVisible(View v){
-        v.setVisibility(View.VISIBLE);
-    }
-
-    private void makeGone(View v){
-        v.setVisibility(View.GONE);
-    }
 
 
     @Override
@@ -314,30 +211,32 @@ public class HomeFragment extends Fragment {
         homeListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
-    private View findViewById(int id){
-        return getView().findViewById(id);
-    }
-
+    // keep this empty method for now
     public void setButtonScanText(String x){
 //        buttonScan.setText(x);
     }
 
-    public void changeImage(){
+    public void changeImage(int index){
+        if (index == imageIndex){
+            return;
+        }
+        visualImage.setImageDrawable(backImages[index]);
+        imageIndex = index;
+    }
 
+    public void showImageConnected(){
+        this.centerButton.setImageDrawable(getActivity().getDrawable(R.drawable.center_check));
+    }
+
+    public void showImageNotConnected(){
+        this.centerButton.setImageDrawable(getActivity().getDrawable(R.drawable.center_x));
+    }
+
+    public void setTopText(String t){
+        this.topText.setText(t);
+    }
+
+    public String getStartText(){
+        return (String) this.startStopText.getText();
     }
 }

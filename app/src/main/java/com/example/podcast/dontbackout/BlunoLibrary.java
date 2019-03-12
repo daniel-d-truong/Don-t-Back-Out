@@ -308,6 +308,10 @@ public abstract class BlunoLibrary extends AppCompatActivity {
             mSCharacteristic.setValue(theString);
             this.mBluetoothLeService.writeCharacteristic(mSCharacteristic);
         }
+        else{
+            Log.i("SERIAL SEND", "connectionState is not equal to .isConnected");
+            Log.i("SERIAL SEND", this.mConnectionState.name());
+        }
     }
 
     public void serialBegin(int baud) {

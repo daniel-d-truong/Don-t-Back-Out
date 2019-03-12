@@ -51,4 +51,6 @@
     <string name="straight_image">Straight Image</string>
     <string name="failed_connection">Failed to calibrate. Connect again.</string>
     <string name="calibration_successful">Calibration successful.</string>
+    <string name="keep_slouched">Keep your posture slouched.</string>
+    <string name="keep_straight">Keep your posture straight.</string>
 </resources>

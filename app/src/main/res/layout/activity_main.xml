@@ -14,13 +14,14 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="610dp"
-        android:layout_height="900dp"
+        android:layout_width="500dp"
+        android:layout_height="750dp"
+        android:layout_marginStart="-25dp"
+        android:layout_marginTop="-5dp"
         android:adjustViewBounds="false"
+        android:contentDescription="bg-image"
         android:cropToPadding="true"
-        android:layout_marginLeft="-90dp"
-        app:srcCompat="@drawable/home_background"
-        />
+        app:srcCompat="@drawable/home_background" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -28,13 +29,13 @@
         android:layout_gravity="bottom">
 
         <ImageView
-            android:id="@+id/imageView6"
+            android:id="@+id/scrollDisplay"
             android:layout_width="158dp"
             android:layout_height="11dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="60dp"
-            android:layout_gravity="bottom"
             android:layout_centerHorizontal="true"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="60dp"
+            android:layout_marginBottom="10dp"
             app:srcCompat="@drawable/circle_1" />
 
     </RelativeLayout>
@@ -47,19 +48,6 @@
         android:layout_marginTop="0dp"
         android:layout_marginBottom="50dp"
         />
-
-
-
-    <com.aurelhubert.ahbottomnavigation.AHBottomNavigation
-        android:id="@+id/bottom_navigation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:layout_conversion_absoluteHeight="0dp"
-        tools:layout_editor_absoluteY="731dp"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_conversion_absoluteWidth="411dp" />
-
-
 
 
 </android.support.design.widget.CoordinatorLayout>

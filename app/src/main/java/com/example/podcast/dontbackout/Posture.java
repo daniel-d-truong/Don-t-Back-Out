@@ -8,6 +8,8 @@ public class Posture {
     Double[] slouchMean;
     Double[] straightMean;
 
+    double criticalAngle;
+
     // constructor
     public Posture(){
         this.reset();
@@ -114,7 +116,7 @@ public class Posture {
 //    }
 
     public String findPostureStatus(Double[] input){
-        double criticalAngle = (straightMean[1] + slouchMean[1]) / 2;
+        criticalAngle = (straightMean[1] + slouchMean[1]) / 2;
         if (input[1] > criticalAngle){
             addStraight(input);
             return "STRAIGHT";
@@ -138,6 +140,8 @@ public class Posture {
     public int getSlouchSize(){
         return slouchSize;
     }
+
+    public double getCriticalAngle(){ return this.criticalAngle; }
 
     @Override
     public String toString() {

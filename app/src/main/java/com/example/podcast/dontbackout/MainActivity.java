@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.Image;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -47,7 +48,7 @@ import java.util.List;
 
 import static android.app.Notification.BADGE_ICON_SMALL;
 
-public class MainActivity extends BlunoLibrary implements HomeFragment.HomeFragmentListener {
+public class MainActivity extends BlunoLibrary implements HomeFragment.HomeFragmentListener, StatsFragment.StatsFragmentListener, GraphFragment.GraphFragmentListener {
     private Posture posture;
     private final long CALIBRATE_TIME = 3500;
     private final long INCREMENT_TIME = 1000;
@@ -56,30 +57,6 @@ public class MainActivity extends BlunoLibrary implements HomeFragment.HomeFragm
     private AHBottomNavigation navigation;
     private boolean notifications = true;
     private boolean bluetoothConnection = false;
-
-    public boolean isCalibrated() {
-        return calibrated;
-    }
-
-    public void setCalibrated(boolean calibrated) {
-        this.calibrated = calibrated;
-    }
-
-    public boolean isStraightCalibrate() {
-        return straightCalibrate;
-    }
-
-    public void setStraightCalibrate(boolean straightCalibrate) {
-        this.straightCalibrate = straightCalibrate;
-    }
-
-    public boolean isSlouchCalibrate() {
-        return slouchCalibrate;
-    }
-
-    public void setSlouchCalibrate(boolean slouchCalibrate) {
-        this.slouchCalibrate = slouchCalibrate;
-    }
 
     // false if not calibrated yet, true if is calibrated
     private boolean calibrated;
@@ -92,12 +69,15 @@ public class MainActivity extends BlunoLibrary implements HomeFragment.HomeFragm
     private ImageView imageView;
 
     private int imageState;
+    private GraphFragment graphFragment;
+    private ImageView scroll;
 
     @Override
     public boolean straightCalibrate(final TextView calibrateText, final View v, final View progress) {
         straightCalibrate = true;
-        calibrateText.setText("Keep your posture straight.");
-
+        calibrateText.setText(getString(R.string.keep_straight));
+        imageState = 0;
+        homeFragment.changeImage(imageState);
 
         new CountDownTimer(CALIBRATE_TIME, INCREMENT_TIME) {
             boolean loaded = false;
@@ -113,10 +93,11 @@ public class MainActivity extends BlunoLibrary implements HomeFragment.HomeFragm
             @Override
             public void onFinish() {
                 if (posture.getStraightSize() == 0) {
-                    homeFragment.setTopText(getString(R.string.failed_connection));
+                    homeFragment.setTopText(getString(R.string.failed_connection) );
+                    homeFragment.resetStep();
                 }
                 else{
-                    homeFragment.setTopText(getString(R.string.calibration_successful));
+                    homeFragment.setTopText(getString(R.string.calibration_successful)  + "\nGet ready to calibrate slouch.");
                     Log.i("ENTRIES", ""+ posture.getStraightSize());
                 }
                 straightCalibrate = false;
@@ -127,12 +108,12 @@ public class MainActivity extends BlunoLibrary implements HomeFragment.HomeFragm
             }
         }.start();
         Log.i("CALIBRATE SIZE", ""+posture.getStraightSize());
-        return homeFragment.getStartText().equals(getString(R.string.calibration_successful));
+        return true;
     }
     @Override
     public boolean slouchCalibrate(final TextView calibrateText, final View start, final View progress) {
         slouchCalibrate = true;
-        calibrateText.setText("Keep your posture slouched.");
+        calibrateText.setText(getString(R.string.keep_slouched));
 
 
         new CountDownTimer(CALIBRATE_TIME, INCREMENT_TIME) {
@@ -155,6 +136,7 @@ public class MainActivity extends BlunoLibrary implements HomeFragment.HomeFragm
                 progress.setVisibility(View.GONE);
                 if (posture.getSlouchSize() == 0){
                     calibrateText.setText(getString(R.string.failed_connection));
+                    homeFragment.resetStep();
                 }
                 else{
                     calibrateText.setText(getString(R.string.calibration_successful));
@@ -162,7 +144,7 @@ public class MainActivity extends BlunoLibrary implements HomeFragment.HomeFragm
 
             }
         }.start();
-        return homeFragment.getStartText().equals(getString(R.string.calibration_successful));
+        return true;
     }
 
     @Override
@@ -176,7 +158,7 @@ public class MainActivity extends BlunoLibrary implements HomeFragment.HomeFragm
     @Override
     public boolean loadBluetooth(TextView t, View start, View progress){
         if (!bluetoothConnection){
-            t.setText("Connect to \"Bluno\" bluetooth");
+            t.setText("Connect to \"Bluno\" bluetooth.\nGet ready to calibrate straight.");
             MainActivity.this.buttonScanOnClickProcess();
         }
         else{
@@ -196,6 +178,16 @@ public class MainActivity extends BlunoLibrary implements HomeFragment.HomeFragm
         this.notifications = !this.notifications;
     }
 
+    @Override
+    public void incrementGraph(int min, int sec) {
+        graphFragment.addDataPoint(min);
+    }
+
+    @Override
+    public void stopCalibration(){
+        calibrated = false;
+    }
+
 //    @Override
 //    public void onFragmentInteraction(Uri uri) {
 //
@@ -211,34 +203,6 @@ public class MainActivity extends BlunoLibrary implements HomeFragment.HomeFragm
 //            MainActivity.this.serialSend(MainActivity.this.serialSendText.getText().toString());
 //            Log.i("testing", MainActivity.this.serialSendText.getText().toString());
 //            MainActivity.this.serialSendText.setText("");
-        }
-    }
-
-    // scanner
-    class C01452 implements View.OnClickListener {
-        C01452() {
-        }
-
-        public void onClick(View v) {
-            MainActivity.this.buttonScanOnClickProcess();
-            posture.reset();
-            straightCalibrate = false;
-            slouchCalibrate = false;
-            calibrated = false;
-        }
-    }
-
-    class tabTouchListener implements AHBottomNavigation.OnTabSelectedListener{
-        ViewPager viewPager;
-        public tabTouchListener(ViewPager viewPager){
-            this.viewPager = viewPager;
-        }
-        @Override
-        public boolean onTabSelected(int position, boolean wasSelected) {
-            if (!wasSelected)
-                viewPager.setCurrentItem(position);
-
-            return true;
         }
     }
 
@@ -306,6 +270,7 @@ public class MainActivity extends BlunoLibrary implements HomeFragment.HomeFragm
     @SuppressLint("ClickableViewAccessibility")
     private void initializeGUI(){
         ViewPager pager = (ViewPager) findViewById(R.id.frame);
+        scroll = (ImageView) findViewById(R.id.scrollDisplay);
 
         PagerAdapter pagerAdapter = new BottomBarAdapter(getSupportFragmentManager());
         Bundle bundle = new Bundle();
@@ -317,71 +282,42 @@ public class MainActivity extends BlunoLibrary implements HomeFragment.HomeFragm
 //
         statsFragment = new StatsFragment();
         statsFragment.setArguments(bundle);
+        
+//        graphFragment = new GraphFragment();
+//        graphFragment.setArguments(bundle);
 //
         ((BottomBarAdapter) pagerAdapter).addFragments(homeFragment);
         ((BottomBarAdapter) pagerAdapter).addFragments(statsFragment);
+//        ((BottomBarAdapter) pagerAdapter).addFragments(graphFragment);
         pager.setAdapter(pagerAdapter);
+
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                if (i == 0){
+                    scroll.setImageDrawable(getDrawable(R.drawable.circle_1));
+                }
+                else if (i == 1){
+                    scroll.setImageDrawable(getDrawable(R.drawable.circle_2));
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
         imageView = findViewById(R.id.imageView);
-//
-//
-//        // creating navigation bar
-//        AHBottomNavigationItem homeItem =
-//                new AHBottomNavigationItem("Home", R.drawable.ic_launcher_background);
-//
-//        AHBottomNavigationItem statsItem =
-//                new AHBottomNavigationItem("Stats", R.drawable.item_background);
-//
-//        AHBottomNavigationItem aboutItem =
-//                new AHBottomNavigationItem("About", R.drawable.notification_background);
-//
-//        navigation = findViewById(R.id.bottom_navigation);
-//        navigation.setAccentColor(R.color.colorAccent);
-//
-//        navigation.addItem(homeItem);
-//        navigation.addItem(statsItem);
-//        navigation.addItem(aboutItem);
-//
-//        navigation.setOnTabSelectedListener(new tabTouchListener(pager));
-//        navigation.setCurrentItem(0);
-//
-//        createNotification(true);
 
         posture = new Posture();
         this.calibrated = false;
         this.counter = 0;
     }
-
-    public boolean onCreateOptionsMenu(Menu menu){
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-//
-//    private void createNotification(boolean connected){
-//        String text;
-//        int color;
-//        if (connected){
-//            text = "Success";
-//            color = Color.GREEN;
-//        }
-//        else{
-//            text = "x";
-//            color = Color.RED;
-//        }
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                AHNotification notification = new AHNotification.Builder()
-//                        .setText("x")
-//                        .setBackgroundColor(Color.RED)
-//                        .setTextColor(Color.WHITE)
-//                        .build();
-//                // Adding notification to last item.
-//                navigation.setNotification(notification, 0);
-////                notificationVisible = true;
-//            }
-//        }, 1000);
-//    }
 
     // runs first
     protected void onCreate(Bundle savedInstanceState) {
@@ -427,15 +363,18 @@ public class MainActivity extends BlunoLibrary implements HomeFragment.HomeFragm
                 // homeFragment.setButtonScanText("Connected");
                 homeFragment.showImageConnected();
                 homeFragment.setTopText("Connected.");
+                serialSend("CONNECTED");
                 bluetoothConnection = true;
                 return;
             case isConnecting:
                 // homeFragment.setButtonScanText("Connecting");
                 homeFragment.showImageNotConnected();
+                bluetoothConnection = false;
                 return;
             case isToScan:
                 // homeFragment.setButtonScanText("Scan");
                 homeFragment.showImageNotConnected();
+                bluetoothConnection = false;
                 return;
             case isScanning:
                 // homeFragment.setButtonScanText("Scanning");
@@ -463,11 +402,12 @@ public class MainActivity extends BlunoLibrary implements HomeFragment.HomeFragm
             return;
         }
         if (this.calibrated) {
-            homeFragment.setTopText("Connected");
             String straightFlag = posture.findPostureStatus(angles);
             Log.i("Straight/Slouch: ", straightFlag);
+            serialSend(String.valueOf(posture.getCriticalAngle()));
             if (straightFlag == null){ return; }
             if (straightFlag.equals("SLOUCHED")){
+                homeFragment.setTopText("Slouched.");
                 counter++;
                 if (notifications && counter % 10 == 0){
                     addNotification();
@@ -475,8 +415,10 @@ public class MainActivity extends BlunoLibrary implements HomeFragment.HomeFragm
                 imageState = 1;
             }
             else{
+                homeFragment.setTopText("Straight.");
                 counter = 0;
                 imageState = 0;
+                statsFragment.increaseTimeText();
             }
             homeFragment.changeImage(imageState);
         }

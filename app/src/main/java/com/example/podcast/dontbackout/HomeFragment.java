@@ -62,6 +62,7 @@ public class HomeFragment extends Fragment {
     private Drawable[] backImages;
     private int imageIndex = 0;
     private boolean notification = true;
+    private int step = 0;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -73,6 +74,8 @@ public class HomeFragment extends Fragment {
         public boolean slouchCalibrate(TextView t, View start, View progress);
         public void stopCalibrate(TextView t, View start, View progress);
         public void changeNotificationStatus();
+        public void stopCalibration();
+
     }
 
     /**
@@ -131,24 +134,26 @@ public class HomeFragment extends Fragment {
         this.startStopText.setVisibility(View.VISIBLE);
         this.startStopText.setOnClickListener(new View.OnClickListener() {
             // 0 - needs to connect, 1 - needs to calibrate straight, 2 - needs to calibrate slouch, 3 - stop
-            private int step = 0;
             private String[] words = new String[]{"connect", "calibrate", "calibrate", "stop"};
 
             @Override
             public void onClick(View v) {
                 startStopText.setVisibility(View.GONE);
                 if (step == 0){
+                    topText.setTextSize(24);
                     homeListener.loadBluetooth(topText, startStopText, progressBar);
                 }
                 else if (step == 1) {
                     homeListener.straightCalibrate(topText, startStopText, progressBar);
+
+
 //                    if (!status){
 //                        step = -1;
 //                    }
                 }
                 else if (step == 2){
-
                     homeListener.slouchCalibrate(topText, startStopText, progressBar);
+
 //                    if (!status){
 //                        step = -1;
 //                    }
@@ -156,7 +161,7 @@ public class HomeFragment extends Fragment {
                 else{
                     homeListener.stopCalibrate(topText, startStopText, progressBar);
                 }
-                step = (step + 1) % 4;
+                step = (step + 1) % 3;
                 startStopText.setVisibility(View.VISIBLE);
                 startStopText.setText(words[step]);
             }
@@ -175,6 +180,21 @@ public class HomeFragment extends Fragment {
                 homeListener.changeNotificationStatus();
             }
         });
+
+        this.leftButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                homeListener.stopCalibration();
+                if (!homeListener.straightCalibrate(topText, startStopText, progressBar)){
+                    step = 0;
+                    startStopText.setText("connect");
+                }
+                else {
+                    step = 2;
+                    startStopText.setText("calibrate");
+                }
+            }
+    });
 
 
     }
@@ -238,5 +258,10 @@ public class HomeFragment extends Fragment {
 
     public String getStartText(){
         return (String) this.startStopText.getText();
+    }
+
+    public void resetStep(){
+        step = 0;
+        startStopText.setText("connect");
     }
 }

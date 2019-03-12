@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeFragment">
+    tools:context=".HomeFragment"
+    android:layout_marginTop="40dp">
 
     <!--<TextView-->
         <!--android:id="@+id/textCalibrate"-->
@@ -128,7 +129,7 @@
             android:src="@drawable/left"
             android:contentDescription="Recalibrate"/>
         <TextView
-            android:layout_width="20dp"
+            android:layout_width="40dp"
             android:layout_height="100dp" />
 
         <ImageView
@@ -140,7 +141,7 @@
             android:contentDescription="Not Connected"/>
 
         <TextView
-            android:layout_width="20dp"
+            android:layout_width="40dp"
             android:layout_height="100dp" />
 
         <ImageView
@@ -153,6 +154,7 @@
 
 
     </LinearLayout>
+
     <Button
         android:id="@+id/startStopText"
         android:layout_width="wrap_content"
@@ -160,10 +162,10 @@
         android:layout_alignBottom="@id/buttonsLayout"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="-46dp"
+        android:background="#00000000"
         android:paddingTop="10dp"
         android:text="@string/start"
-        android:textSize="30sp"
-        android:background="#00000000"/>
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/topPlaceText"
@@ -173,7 +175,7 @@
         android:layout_marginTop="40dp"
         android:gravity="center_horizontal"
         android:text="Don't Back Out"
-        android:textSize="24sp" />
+        android:textSize="36sp" />
 
     <RelativeLayout
         android:id="@+id/loadingPanel"

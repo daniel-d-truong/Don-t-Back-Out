@@ -16,7 +16,7 @@ import android.widget.TextView;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link StatsFragment.OnFragmentInteractionListener} interface
+ * {@link StatsFragment.StatsFragmentListener} interface
  * to handle interaction events.
  * Use the {@link StatsFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -32,11 +32,19 @@ public class StatsFragment extends Fragment {
     private String mParam2;
     private RelativeLayout statsLayout;
 
-    private OnFragmentInteractionListener mListener;
+    private StatsFragmentListener mListener;
     private Typeface regularFont;
+
+    private double seconds;
+    private int minutes;
+
+    private final double INCREMENT_TIME = 0.4;
+    private TextView updateText;
 
     public StatsFragment() {
         // Required empty public constructor
+        seconds = 0.0;
+        minutes = 0;
     }
 
     /**
@@ -83,33 +91,26 @@ public class StatsFragment extends Fragment {
         this.regularFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/AvenirNextLTPro-Regular.otf");
         for (int i = 0; i < statsLayout.getChildCount(); i++){
             CardView cv = (CardView) statsLayout.getChildAt(i);
-            for (int j = 0; j < statsLayout.getChildCount(); j++){
+            for (int j = 0; j < cv.getChildCount(); j++){
                 TextView v = (TextView) cv.getChildAt(j);
                 if (v == null){
                     throw new NullPointerException("textview is null/"+ statsLayout.getChildCount());
                 }
                 v.setTypeface(this.regularFont);
             }
-
         }
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+        this.updateText = view.findViewById(R.id.right1);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
+        if (context instanceof StatsFragmentListener) {
+            mListener = (StatsFragmentListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement StatsFragmentListener");
+        }
     }
 
     @Override
@@ -128,8 +129,24 @@ public class StatsFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface StatsFragmentListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        public void incrementGraph(int min, int sec);
+    }
+
+    public void increaseTimeText(){
+        seconds+=INCREMENT_TIME;
+        String t = "";
+
+        minutes += (int) seconds/60;
+        if (seconds/60 == 1){
+            mListener.incrementGraph(minutes, (int) seconds);
+        }
+        seconds%=60;
+        if (minutes != 0){
+            t+=minutes + " minutes ";
+        }
+        t+=(int)seconds + " seconds";
+        this.updateText.setText(t);
     }
 }

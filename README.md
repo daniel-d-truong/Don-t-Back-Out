@@ -5,6 +5,7 @@ This repository is the Android application developed on Android Studio.
 
 <img src="dbo-home.png" width="300"> </img>
 <img src="dbo-time.png" width="300"> </img>
+*To see a demo of this device in action, check out [this video](https://www.youtube.com/watch?v=FBeKVBKQoDQ&feature=youtu.be)*
 
 This project was created for **Quarterly Projects (Winter 2019) for iEEE @ UCSD** where we placed **1st** in the showcase out of 20 teams. Quarterly Project @ iEEE UCSD is a program where students can group up into teams, and under a certain theme, develop a project in one quarter that would be showcased to judges who would evaluate projects by polish, impressiveness, and presentation.
 

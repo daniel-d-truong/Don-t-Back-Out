@@ -1,4 +1,4 @@
-# Don-t Back Out
+# Don't Back Out
 ## by Daniel Truong, William Martino, Nakul Goel
 ### Mobile Android Application developed by Daniel Truong
 This repository is the Android application developed on Android Studio. 

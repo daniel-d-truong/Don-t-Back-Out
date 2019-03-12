@@ -15,8 +15,8 @@ In this modern day and age, bad back posture is a common health issue felt by pe
 This mobile application is linked to an Arduino device that would ideally be placed on the back of the user, near the collar ([link to Arduino code](https://github.com/wmartino/Dont-Back-Out-Hardware)). Essentially, the Android application takes in readings of the back angles from accelerometer in the hardware. This data would be sent via bluetooth from the Arduino's **Bluno Beetle**. Using this received data, the application would go through a *calibration mode* where the angles of the user's "straight" and "slouched" posture would stored to calculate the initial user's critical angle. From then on, the user is notified, through the app and the vibration motor on the hardware, whenever they are slouching for too long. 
 
 ## Other Features
-1) Toggling Notfications: User is able to turn on/off notifications if they no longer wants to receive notifications for their back.
-2) Recalibration: If the applicaton is unable to read the user's posture correctly, the user is able to click the left recalibration button to reset the initial data entries and receive new data.
-3) Time Stored: The application can also store how long the user stays in good posture per day.
+1) **Toggling Notfications**: User is able to turn on/off notifications if they no longer wants to receive notifications for their back.
+2) **Recalibration**: If the applicaton is unable to read the user's posture correctly, the user is able to click the left recalibration button to reset the initial data entries and receive new data.
+3) **Time Stored**: The application can also store how long the user stays in good posture per day.
 
 To learn more about this project, check out our [website](https://dontbackout.com). If you have any questions regarding this project, you can contact me through my email **ddtruong06@gmail.com**. 

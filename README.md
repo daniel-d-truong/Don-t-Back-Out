@@ -21,4 +21,4 @@ This mobile application is linked to an Arduino device that would ideally be pla
 2) **Recalibration**: If the applicaton is unable to read the user's posture correctly, the user is able to click the left recalibration button to reset the initial data entries and receive new data.
 3) **Time Stored**: The application can also store how long the user stays in good posture per day.
 
-To learn more about this project, check out our [website](https://dontbackout.com). If you have any questions regarding this project, you can contact me through my email **ddtruong06@gmail.com**. 
+To learn more about this project, check out our [documentation](https://docs.google.com/document/d/1MlpisIhvw0-CkUarUnyjEnMeDvSwFKtik5zGiJFrTvU/edit?usp=sharing). If you have any questions regarding this project, you can contact me through my email **ddtruong06@gmail.com**. 
